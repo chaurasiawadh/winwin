@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Text, View, Image, TouchableOpacity,StatusBar } from 'react-native';
+import { Text, View, Image, TouchableOpacity, StatusBar, Vibration,} from 'react-native';
+import { colors } from '../../shared/theme/colors';
 import { styles } from './styles';
 const dice_1 = require('../../../assets/dice_1.png');
 const dice_2 = require('../../../assets/dice_2.png');
@@ -23,6 +24,7 @@ const LudoMain = () => {
     setRandonDice(6);
     setTimeout(() => {
       const randomNumber = Math.ceil(Math.random() * 6) - 1;
+      !randomNumber && vibration();
       setRandonDice(randomNumber);
 
       switch (player) {
@@ -48,6 +50,7 @@ const LudoMain = () => {
   };
 
   const holdPlayer = (player: string) => {
+    vibration();
     setActivePlayer(player);
     switch (player) {
       case 'player2':
@@ -89,39 +92,52 @@ const LudoMain = () => {
     };
   }, [playerFirstTotalScore, playerSecondTotalScore]);
 
+  const vibration = () => {
+    Vibration.vibrate(50);
+  }
+
   return (
     <Fragment>
-      <StatusBar backgroundColor="blue" barStyle="light-content" />
+      <StatusBar backgroundColor={colors.primary_dark} barStyle="light-content" />
       <View style={styles.container}>
-        <View style={{ flexDirection: 'row' }}>
+        <View>
           <TouchableOpacity
-            style={[
-              styles.nameBox,
-              activePlayer === 'player2' && { backgroundColor: '#D0D0D0' },
-            ]}
-            disabled={activePlayer === 'player2'}
-            onPress={() => randamDiceHandler('playerFirst')}>
-            <Text style={styles.nameTxt}>DC</Text>
+            style={[styles.nameBox, styles.rotate, activePlayer === 'player2' && { backgroundColor: '#D0D0D0' },]}
+            disabled={true}>
+            <Text style={styles.nameTxt} numberOfLines={1}>DC</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.holdBox,
-            activePlayer === 'player2' && { backgroundColor: '#D0D0D0' }]}
-            disabled={activePlayer === 'player2'}
-            onPress={() => holdPlayer('player2')}>
-            <Text style={styles.holdTxt}>Hold</Text>
-          </TouchableOpacity>
+          <View style={styles.rollViewBox}>
+            <TouchableOpacity
+              style={[ styles.rollBox,, styles.rotate,
+              activePlayer === 'player2' && { backgroundColor: '#D0D0D0' }]}
+              disabled={activePlayer === 'player2'}
+              onPress={() => randamDiceHandler('playerFirst')}>
+              <Text style={styles.rollTxt}>Roll Dice</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.holdBox, styles.rotate,
+              activePlayer === 'player2' && { backgroundColor: '#D0D0D0' }]}
+              disabled={activePlayer === 'player2'}
+              onPress={() => holdPlayer('player2')}>
+              <Text style={styles.holdTxt}>Hold</Text>
+            </TouchableOpacity>
+
+          </View>
         </View>
+        
         <View>
-          <Text style={[styles.finalScrore, { textAlign: 'left' }]}>
+          <Text style={[styles.finalScrore,, styles.rotate]}>
             {playerFirstTotalScore}
           </Text>
-          <Text style={styles.playerScore}>
+          <Text style={[styles.playerScore, styles.rotate]}>
             {playerFirstScore}
           </Text>
         </View>
 
         <Image style={styles.diceImg} source={diceList[randonDice]} />
+
 
         <View>
           <Text style={styles.playerScore}>
@@ -132,16 +148,16 @@ const LudoMain = () => {
             {playerSecondTotalScore}
           </Text>
         </View>
-        <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity
-            style={[
-              styles.nameBox,
-              activePlayer === 'player1' && { backgroundColor: '#D0D0D0' },
-            ]}
-            disabled={activePlayer === 'player1'}
-            onPress={() => randamDiceHandler('playerSecond')}>
-            <Text style={styles.nameTxt}>Marvel</Text>
-          </TouchableOpacity>
+
+        <View>
+        <View  style={[styles.rollViewBox,{marginBottom:8}]}>
+            <TouchableOpacity
+              style={[ styles.rollBox,
+                activePlayer === 'player1' && { backgroundColor: '#D0D0D0' }]}
+              disabled={activePlayer === 'player1'}
+              onPress={() => randamDiceHandler('playerSecond')}>
+              <Text style={styles.rollTxt}>Roll Dice</Text>
+            </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.holdBox,
@@ -149,6 +165,13 @@ const LudoMain = () => {
             disabled={activePlayer === 'player1'}
             onPress={() => holdPlayer('player1')}>
             <Text style={styles.holdTxt}>Hold</Text>
+          </TouchableOpacity>
+          </View>
+          
+          <TouchableOpacity
+            disabled={true}
+            style={[styles.nameBox,activePlayer === 'player1' && { backgroundColor: '#D0D0D0' },]}>
+            <Text style={styles.nameTxt} numberOfLines={1}>Marvel</Text>
           </TouchableOpacity>
         </View>
       </View>
