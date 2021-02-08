@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Text, View, Image, TouchableOpacity, StatusBar, Vibration,} from 'react-native';
+import GetPlayerModal from '../../shared/modal/GetPlayerModal';
 import { colors } from '../../shared/theme/colors';
 import { styles } from './styles';
 const dice_1 = require('../../../assets/dice_1.png');
@@ -12,11 +13,12 @@ const dice_7 = require('../../../assets/gif/diceroll_4.gif');
 
 const LudoMain = () => {
   const diceList = [dice_1, dice_2, dice_3, dice_4, dice_5, dice_6, dice_7];
+  const [isModal, setIsModal] = useState(true);
   const [activePlayer, setActivePlayer] = useState('player1');
+  const [userData, setUserData] = useState({});
   const [randonDice, setRandonDice] = useState(0);
   const [playerFirstScore, setPlayerFirstScore] = useState(0);
   const [playerSecondScore, setPlayerSecondScore] = useState(0);
-
   const [playerFirstTotalScore, setPlayerFirstTotalScore] = useState(0);
   const [playerSecondTotalScore, setPlayerSecondTotalScore] = useState(0);
 
@@ -43,7 +45,7 @@ const LudoMain = () => {
           break;
 
         default:
-          alert('Oop! something wrong');
+          alert('Oops! something wrong');
           break;
       }
     }, 500)
@@ -68,7 +70,7 @@ const LudoMain = () => {
         break;
 
       default:
-        // alert('Oop! something wrong');
+        alert('Oops! something wrong');
         break;
     }
   };
@@ -96,9 +98,16 @@ const LudoMain = () => {
     Vibration.vibrate(50);
   }
 
+  const onModalValidFormData = (formData) => {
+    console.log('formData', formData);
+    setIsModal(false);
+    setUserData(formData);
+  }
+
   return (
     <Fragment>
       <StatusBar backgroundColor={colors.primary_dark} barStyle="light-content" />
+      {isModal && <GetPlayerModal onModalValidFormData={onModalValidFormData} />}
       <View style={styles.container}>
         <View>
           <TouchableOpacity
